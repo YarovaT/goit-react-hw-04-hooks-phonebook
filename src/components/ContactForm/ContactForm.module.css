@@ -1,0 +1,48 @@
+form {
+  max-width: 350px;
+  margin: 10px;
+  padding: 20px;
+  background: #669966;
+  font-family: 'Oswald', sans-serif;
+}
+
+.formGroup {
+  margin-bottom: 20px;
+  padding: 10px;
+  background: #003300;
+}
+
+.formGroup input,
+.form-group label {
+  display: block;
+  width: 100%;
+}
+
+.formGroup input {
+  padding: 5px;
+  line-height: 10px;
+}
+
+.formGroup label {
+  margin-bottom: 5px;
+  color: #000000;
+  text-transform: uppercase;
+  font-size: 12px;
+}
+
+.button {
+  display: block;
+  margin: 10px 4px;
+  padding: 5px;
+  cursor: pointer;
+  color: #000000;
+  background-color: #ffffff;
+
+  font-size: 14px;
+  font-family: inherit;
+}
+
+.button:hover,
+.button:focus {
+  background-color: #336633;
+}

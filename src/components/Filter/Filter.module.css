@@ -1,0 +1,21 @@
+input,
+label {
+  max-width: 350px;
+  margin: 10px;
+  padding: 20px;
+
+  font-family: 'Oswald', sans-serif;
+  display: block;
+}
+
+input {
+  padding: 5px;
+  line-height: 10px;
+}
+
+label {
+  color: #000000;
+  text-transform: uppercase;
+  font-size: 12px;
+  background: #669966;
+}
