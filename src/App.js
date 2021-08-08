@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import { useState } from 'react';
 import './App.css';
 import ContactForm from './components/ContactForm';
 import ContactList from './components/ContactList';
@@ -7,17 +7,15 @@ import { v4 as uuidv4 } from 'uuid';
 import Filter from './components/Filter';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import useLocalStorage from './components/hooks/useLocalStorage';
 
-class App extends Component {
-  state = {
-    contacts: [],
-    filter: '',
-  };
+export default function App() {
+  // Объявление новой переменной состояния
+  const [contacts, setContacts] = useLocalStorage('contacts', '');
+  const [filter, setFilter] = useState('');
 
-  contactId = uuidv4();
-
-  formSubmitHandler = newContact => {
-    const similarName = this.state.contacts
+  const formSubmitHandler = newContact => {
+    const similarName = contacts
       .map(contact => contact.name.toLowerCase())
       .includes(newContact.name.toLowerCase());
 
@@ -31,32 +29,24 @@ class App extends Component {
       notifyWarn();
     } else {
       const addContact = {
-        id: this.contactId,
+        id: uuidv4(),
         ...newContact,
       };
       notifySuccess();
 
-      this.setState(({ contacts }) => ({
-        contacts: [...contacts, addContact],
-      }));
+      setContacts(contacts => [...contacts, addContact]);
     }
   };
 
-  onDeleteContact = contactId => {
-    this.setState(prevState => {
-      return {
-        contacts: prevState.contacts.filter(({ id }) => id !== contactId),
-      };
-    });
+  const onDeleteContact = id => {
+    setContacts(contacts.filter(contact => contact.id !== id));
   };
 
-  seachContactByName = contactName => {
-    this.setState({ filter: contactName.currentTarget.value });
+  const seachContactByName = contactName => {
+    setFilter(contactName.currentTarget.value);
   };
 
-  getVisibleContacts = () => {
-    const { contacts, filter } = this.state;
-
+  const getVisibleContacts = () => {
     const normalizedFilter = filter.toLowerCase();
 
     return contacts.filter(contact =>
@@ -64,58 +54,27 @@ class App extends Component {
     );
   };
 
-  componentDidMount() {
-    console.log('App componentDidMount');
+  return (
+    <div className="Container">
+      <h1>Phonebook</h1>
+      <ContactForm onSubmit={formSubmitHandler} />
 
-    const contacts = localStorage.getItem('contacts');
-    const parsedContacts = JSON.parse(contacts);
-    if (parsedContacts) {
-      this.setState({ contacts: parsedContacts });
-    }
+      <Filter value={filter} onChange={seachContactByName} />
 
-    console.log(parsedContacts);
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    console.log('App componentDidUpdate');
-
-    if (this.state.contacts !== prevState.contacts) {
-      console.log('Update');
-      localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
-    }
-  }
-
-  render() {
-    console.log('App render');
-
-    const { filter } = this.state;
-
-    const visibleContacts = this.getVisibleContacts();
-
-    return (
-      <div className="Container">
-        <h1>Phonebook</h1>
-        <ContactForm onSubmit={this.formSubmitHandler} />
-
-        <Filter value={filter} onChange={this.seachContactByName} />
-
-        <h2>Contacts</h2>
-        <ContactList
-          contacts={visibleContacts}
-          onDeleteContact={this.onDeleteContact}
-        />
-        <ToastContainer
-          position="top-center"
-          autoClose={2000}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss={false}
-          draggable={false}
-        />
-      </div>
-    );
-  }
+      <h2>Contacts</h2>
+      <ContactList
+        contacts={getVisibleContacts()}
+        onDeleteContact={onDeleteContact}
+      />
+      <ToastContainer
+        position="top-center"
+        autoClose={2000}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss={false}
+        draggable={false}
+      />
+    </div>
+  );
 }
-
-export default App;
